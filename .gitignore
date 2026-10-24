@@ -1,0 +1,20 @@
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+build/
+auto/
+# macOS
+.DS_Store
+# Personal / signed documents (keep only locally)
+admin/*.pdf
