@@ -1,0 +1,105 @@
+% ======================================================================
+%  Dolega-publication-list.tex -- list of publications of Maciej Dołęga
+%  Standalone version (no dependence on the Profesura project).
+%  Data: Dolega-publications.bib (in this folder).
+%  Compile:  latexmk -pdf Dolega-publication-list.tex     (needs biber)
+%
+%  Groups and labels (by entry type), reverse chronological within each group:
+%    [J] Journal articles                 = @article
+%    [E] Preprints                        = @misc without howpublished
+%    [F] FPSAC extended abstracts         = @inproceedings
+%    [O] Oberwolfach Reports              = @misc with howpublished
+% ======================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5\baselineskip}
+
+% ---------- personal data (change here) ----------
+\newcommand{\Author}{Maciej Dołęga}
+\newcommand{\Webpage}{https://www.impan.pl/~mdolega}
+\newcommand{\DocTitle}{List of publications}
+
+% ---------- colour of DOI / arXiv / web links (change here) ----------
+\definecolor{linkcolor}{RGB}{0,70,160}
+
+% ---------- header and footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small \Author}
+\fancyhead[R]{\small \DocTitle}
+\fancyfoot[C]{\small Page \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---------- bibliography ----------
+\usepackage[backend=biber,style=numeric,sorting=ydnt,defernumbers=true,
+            maxbibnames=99,giveninits=true,url=false,doi=true,eprint=true]{biblatex}
+\addbibresource{Dolega-publications.bib}
+% no "In:" before the journal or proceedings name
+\renewbibmacro{in:}{}
+% volume numbers in bold everywhere (as in the Oberwolfach Reports entries)
+\DeclareFieldFormat{volume}{\mkbibbold{#1}}
+\DeclareFieldFormat[article,periodical]{volume}{\mkbibbold{#1}}
+\DeclareFieldFormat[inproceedings,incollection,book]{volume}{\bibstring{volume}~\mkbibbold{#1}}
+
+% the two kinds of @misc entries (preprints have no howpublished)
+\defbibcheck{preprints}{\ifentrytype{misc}{\iffieldundef{howpublished}{}{\skipentry}}{\skipentry}}
+\defbibcheck{owr}{\ifentrytype{misc}{\iffieldundef{howpublished}{\skipentry}{}}{\skipentry}}
+
+% ben-dali-dolega-2023 is shown as a plain preprint (not yet officially accepted)
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map[overwrite]{
+      \step[fieldsource=entrykey, matchi={ben-dali-dolega-2023}, final]
+      \step[typesource=article, typetarget=misc]
+      \step[fieldset=journaltitle, null]
+      \step[fieldset=journal, null]
+      \step[fieldset=pubstate, null]
+    }
+  }
+}
+
+% #1 label prefix, #2 printbibliography options, #3 title
+\newcommand{\PubGroup}[3]{%
+  \newrefcontext[labelprefix=#1]%
+  \printbibliography[#2,resetnumbers=true,heading=bibliography,title={#3}]}
+
+% ---------- hyperlinks (load last) ----------
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=linkcolor,linkcolor=black,citecolor=black,
+            pdfauthor={\Author},pdftitle={\DocTitle}}
+
+\begin{document}
+\thispagestyle{fancy}
+\begin{center}
+  {\Large\bfseries \DocTitle\par}\medskip
+  {\large \Author\par}\smallskip
+  \href{\Webpage}{www.impan.pl/\textasciitilde mdolega}
+\end{center}
+\medskip
+
+\nocite{*}
+
+\PubGroup{J}{type=article}{Journal articles}
+\PubGroup{E}{check=preprints}{Preprints}
+
+\PubGroup{F}{type=inproceedings}{Peer-reviewed conference proceedings (FPSAC extended abstracts)}
+\PubGroup{O}{check=owr}{Oberwolfach Reports (extended abstracts of workshop talks)}
+\endrefcontext
+
+\end{document}
